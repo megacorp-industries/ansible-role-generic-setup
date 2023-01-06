@@ -24,6 +24,10 @@
       copy:
         src: files/update-MOTD.sh
         dest: /tmp
+    - name: Make configuration script executable
+      file:
+        path: /tmp/update-MOTD.sh
+        mode: '0744'
     - name: Run configuration script
       shell: /tmp/update-MOTD.sh
       
