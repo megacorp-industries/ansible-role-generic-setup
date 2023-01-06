@@ -22,7 +22,7 @@
         dest: /usr/bin
     - name: Copy configuration script
       copy:
-        src: files/update-motd.sh
+        src: files/update-MOTD.sh
         dest: /tmp
     - name: Run configuration script
       shell: /tmp/update-MOTD.sh
