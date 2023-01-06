@@ -19,7 +19,11 @@
     - name: Upload MOTD script
       copy:
         src: files/MOTD.sh
-        dest: /usr/bin/MOTD.sh
+        dest: /usr/bin
+    - name: Copy configuration script
+      copy:
+        src: files/update-motd.sh
+        dest: /tmp
     - name: Run configuration script
-      shell: files/update-MOTD.sh
+      shell: /tmp/update-MOTD.sh
       
