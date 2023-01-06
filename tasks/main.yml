@@ -14,54 +14,12 @@
       apt:
         autoremove: yes
 
-- name: Configure GRUB
+- name: Update MOTD
   block:
-    - name: Configure GRUB to enable serial console on Ubuntu
+    - name: Upload MOTD script
       copy:
-        src: grub.ubuntu
-        dest: /etc/default/grub
-        mode: '0644'
-        owner: root
-        group: root
-        backup: no
-    - name: Regenerate GRUB configuration
-      command: "/usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg"
-
-- name: Tweak Ubuntu netplan config
-  copy:
-    src: 01-netcfg.yaml.ubuntu
-    dest: /etc/netplan/01-netcfg.yaml
-    mode: '0644'
-    owner: root
-    group: root
-    backup: no
-
-- name: Add local pub key to authorized_keys root
-  authorized_key:
-    user: root
-    key: "{{ lookup('file', 'id_rsa.pub') }}"
-    state: present
-
-- name: Tweak sshd_config
-  lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: ".*UseDNS.*"
-    line: "UseDNS no"
-
-- name: Install Java11
-  apt:
-    name: default-jre
-    state: present
-
-- name: Ensure unzip is installed.
-  apt: 
-    name: unzip 
-    state: present
-
-- name: Download and unarchive Packer.
-  unarchive:
-    src: https://releases.hashicorp.com/packer/{{ packer_version }}/packer_{{ packer_version }}_linux_{{ packer_arch }}.zip
-    dest: "{{ packer_bin_path }}"
-    remote_src: true
-    creates: "{{ packer_bin_path }}/packer"
-    mode: 0755
+        src: files/MOTD.sh
+        dest: /usr/bin/MOTD.sh
+    - name: Run configuration script
+      shell: update-MOTD.sh
+      
