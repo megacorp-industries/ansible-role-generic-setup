@@ -31,3 +31,21 @@
     - name: Run configuration script
       shell: /tmp/update-MOTD.sh
       
+- name: Install and configure zsh shell
+  block:
+    - name: Install zsh
+      apt:
+        name: zsh
+        state: present
+    - name: Clone ohmyzsh repo
+      git:
+        repo: "https://github.com/ohmyzsh/ohmyzsh.git"
+        dest: "{{ HOME_DIR }}/.oh-my-zsh"
+    - name: Copy zsh config
+      copy:
+        src: files/.zshrc
+        dest: "{{ HOME_DIR }}"
+    - name: Change default shell
+      user:
+        name: "{{ USER }}"
+        shell: /bin/zsh
