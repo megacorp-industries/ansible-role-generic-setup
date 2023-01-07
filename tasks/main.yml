@@ -1,11 +1,11 @@
 ---
 - name: Ubuntu latest packages update/upgrade and clean
   block:
-    - name: Run the equivalent of "apt-get update" as a separate step
+    - name: Update repos
       apt:
         update_cache: yes
         force_apt_get: yes
-    - name: Update all packages to the latest version
+    - name: Upgrade packages
       apt:
         upgrade: dist
     - name: Remove useless packages from the cache
