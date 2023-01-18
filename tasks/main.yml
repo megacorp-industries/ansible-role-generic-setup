@@ -10,15 +10,15 @@
       apt:
         update_cache: yes
         force_apt_get: yes
-#    - name: Upgrade packages
-#      apt:
-#        upgrade: dist
-#    - name: Remove useless packages from the cache
-#      apt:
-#        autoclean: yes
-#    - name: Remove dependencies that are no longer required
-#      apt:
-#        autoremove: yes
+    - name: Upgrade packages
+      apt:
+        upgrade: dist
+    - name: Remove useless packages from the cache
+      apt:
+        autoclean: yes
+    - name: Remove dependencies that are no longer required
+      apt:
+        autoremove: yes
 
 - name: Install and configure zsh shell
   block:
