@@ -1,0 +1,100 @@
+---
+- name: Ensure user exists
+  user:
+    name: "{{ USER }}"
+    shell: /bin/bash
+
+- name: Ubuntu latest packages update/upgrade and clean
+  block:
+    - name: Update repos
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+#    - name: Upgrade packages
+#      apt:
+#        upgrade: dist
+#    - name: Remove useless packages from the cache
+#      apt:
+#        autoclean: yes
+#    - name: Remove dependencies that are no longer required
+#      apt:
+#        autoremove: yes
+
+- name: Install and configure zsh shell
+  block:
+    - name: Install zsh
+      apt:
+        name: zsh
+        state: present
+    - name: Clone ohmyzsh repo
+      git:
+        repo: "https://github.com/ohmyzsh/ohmyzsh.git"
+        dest: "{{ HOME_DIR }}/.oh-my-zsh"
+    - name: Copy zsh config
+      copy:
+        src: files/.zshrc
+        dest: "{{ HOME_DIR }}"
+    - name: Change default shell
+      user:
+        name: "{{ USER }}"
+        shell: /bin/zsh
+
+- name: Install and configure tmux
+  block:
+    - name: Install tmux
+      apt:
+        name: tmux
+        state: present
+    - name: Download pretty tmux from git
+      git:
+        repo: "https://github.com/gpakosz/.tmux.git"
+        dest: "{{ HOME_DIR }}/.tmux"
+    - name: 
+      command: ln -s -f .tmux/.tmux.conf
+      args:
+        chdir: "{{ HOME_DIR }}"
+    - name: 
+      command: cp .tmux/.tmux.conf.local .
+      args:
+        chdir: "{{ HOME_DIR }}"
+
+- name: Install and configure vim
+  block:
+    - name: Install vim
+      apt:
+        name: vim
+        state: present
+    - name: Download awesome vim from git
+      git:
+        repo: https://github.com/amix/vimrc.git
+        depth: 1
+        dest: /opt/vim_runtime
+    - name: Execute awesome vim install
+      command: sh /opt/vim_runtime/install_awesome_parameterized.sh /opt/vim_runtime --all
+
+- name: Configure Megacorp terminal logo
+  block:
+    - name: Install neofetch
+      apt:
+        name: neofetch
+        state: present
+    - name: Ensure .config file exists
+      file:
+        path: "{{ HOME_DIR }}/.config/neofetch"
+        state: directory
+    - name: Copy neofetch config
+      copy:
+        src: files/config.conf
+        dest: "{{ HOME_DIR }}/.config/neofetch/"
+    - name: Copy megacorplogo
+      copy:
+        src: files/megacorplogo
+        dest: "{{ HOME_DIR }}/.config/neofetch/"
+
+- name: Fix permissions
+  file:
+    path: "{{ HOME_DIR }}"
+    recurse: true
+    owner: "{{ USER }}"
+    group: "{{ USER }}"
+
