@@ -4,7 +4,7 @@
     name: "{{ USER }}"
     shell: /bin/bash
 
-- name: Ubuntu latest packages update/upgrade and clean
+- name: Install latest packages update/upgrade, and install dependencies
   block:
     - name: Update repos
       apt:
@@ -13,6 +13,10 @@
     - name: Upgrade packages
       apt:
         upgrade: dist
+    - name: Install Git
+      apt:
+        name: git
+        state: present
     - name: Remove useless packages from the cache
       apt:
         autoclean: yes
