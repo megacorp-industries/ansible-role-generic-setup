@@ -1,2 +1,3 @@
 HOME_DIR: /home/operator
 USER: operator
+KEY_FILE: "id_ed25519.pub"
