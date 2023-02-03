@@ -7,7 +7,7 @@
      authorized_key:                                                                                                   
        user: "{{ USER }}"                                                                                                
        state: present                                                                                                  
-       key: "{{ lookup('file', '/home/$USER/.ssh/id_ed25519.pub') }}"
+       key: "{{ lookup('file', '/home/$USER/.ssh/{{ key_file }}') }}"
 
 - name: Install latest packages update/upgrade, and install dependencies
   block:
