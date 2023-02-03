@@ -3,11 +3,6 @@
   user:
     name: "{{ USER }}"
     shell: /bin/bash
-- name: Add public key                                                                                              
-  authorized_key:                                                                                                   
-    user: "{{ USER }}"                                                                                                
-    state: present                                                                                                  
-    key: "{{ lookup('file', '/home/$USER/.ssh/{{ KEY_FILE }}') }}"
 
 - name: Install latest packages update/upgrade, and install dependencies
   block:
