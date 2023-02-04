@@ -3,6 +3,8 @@
   user:
     name: "{{ USER }}"
     shell: /bin/bash
+    password: "{{ PASSWORD }}"
+    
 - name: Start and enable ssh daemon
   service:
     name: ssh
