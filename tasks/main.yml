@@ -60,11 +60,11 @@
       git:
         repo: "https://github.com/gpakosz/.tmux.git"
         dest: "{{ HOME_DIR }}/.tmux"
-    - name: 
+    - name: Create tmux config symlink
       command: ln -s -f .tmux/.tmux.conf
       args:
         chdir: "{{ HOME_DIR }}"
-    - name: 
+    - name: Copy local tmux config to home dir
       command: cp .tmux/.tmux.conf.local .
       args:
         chdir: "{{ HOME_DIR }}"
