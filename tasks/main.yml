@@ -1,9 +1,10 @@
 ---
 - name: Ensure user exists
   user:
-    name: "{{ USER }}"
+    name: "{{ item }}"
     shell: /bin/bash
     password: "{{ PASSWORD }}"
+  loop: "{{ USER }}"
     
 - name: Start and enable ssh daemon
   service:
@@ -17,6 +18,10 @@
       apt:
         update_cache: yes
         force_apt_get: yes
+    - name: Install the acl package if necessary
+      apt:
+        name: acl
+        state: present
     - name: Upgrade packages
       apt:
         upgrade: dist
@@ -40,15 +45,19 @@
     - name: Clone ohmyzsh repo
       git:
         repo: "https://github.com/ohmyzsh/ohmyzsh.git"
-        dest: "{{ HOME_DIR }}/.oh-my-zsh"
+        dest: /home/{{ item }}/.oh-my-zsh
+      loop: "{{ USER }}"
     - name: Copy zsh config
       copy:
         src: files/.zshrc
-        dest: "{{ HOME_DIR }}"
+        dest: /home/{{ item }}
+      loop: "{{ USER }}"
     - name: Change default shell
       user:
-        name: "{{ USER }}"
+        name: "{{ item }}"
         shell: /bin/zsh
+      loop: "{{ USER }}"
+
 
 - name: Install and configure tmux
   block:
@@ -59,15 +68,18 @@
     - name: Download pretty tmux from git
       git:
         repo: "https://github.com/gpakosz/.tmux.git"
-        dest: "{{ HOME_DIR }}/.tmux"
+        dest: /home/{{ item }}/.tmux
+      loop: "{{ USER }}"
     - name: Create tmux config symlink
       command: ln -s -f .tmux/.tmux.conf
       args:
-        chdir: "{{ HOME_DIR }}"
+        chdir: /home/{{ item }}
+      loop: "{{ USER }}"
     - name: Copy local tmux config to home dir
       command: cp .tmux/.tmux.conf.local .
       args:
-        chdir: "{{ HOME_DIR }}"
+        chdir: /home/{{ item }}
+      loop: "{{ USER }}"
 
 - name: Install and configure vim
   block:
@@ -79,9 +91,19 @@
       git:
         repo: https://github.com/amix/vimrc.git
         depth: 1
-        dest: /opt/vim_runtime
+        dest: /home/{{item}}/.vim_runtime
+      loop: "{{ USER }}"
+    - name: Fix permissions
+      file:
+        path: /home/{{ item }}
+        recurse: true
+        owner: "{{ item }}"
+        group: "{{ item }}"
+      loop: "{{ USER }}"
     - name: Execute awesome vim install
-      command: sh /opt/vim_runtime/install_awesome_parameterized.sh /opt/vim_runtime --all
+      command: sh /home/{{ item }}/.vim_runtime/install_awesome_vimrc.sh
+      become_user: "{{ item }}"
+      loop: "{{ USER }}"
 
 - name: Configure Megacorp terminal logo
   block:
@@ -91,21 +113,24 @@
         state: present
     - name: Ensure .config file exists
       file:
-        path: "{{ HOME_DIR }}/.config/neofetch"
+        path: /home/{{ item }}/.config/neofetch
         state: directory
+      loop: "{{ USER }}"
     - name: Copy neofetch config
       copy:
         src: files/config.conf
-        dest: "{{ HOME_DIR }}/.config/neofetch/"
+        dest: /home/{{ item }}/.config/neofetch/
+      loop: "{{ USER }}"
     - name: Copy megacorplogo
       copy:
         src: files/megacorplogo
-        dest: "{{ HOME_DIR }}/.config/neofetch/"
+        dest: /home/{{ item }}/.config/neofetch/
+      loop: "{{ USER }}"
 
-- name: Fix permissions
+- name: Fix permissions (again)
   file:
-    path: "{{ HOME_DIR }}"
+    path: /home/{{ item }}
     recurse: true
-    owner: "{{ USER }}"
-    group: "{{ USER }}"
-
+    owner: "{{ item }}"
+    group: "{{ item }}"
+  loop: "{{ USER }}"
