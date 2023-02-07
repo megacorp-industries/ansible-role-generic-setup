@@ -25,16 +25,14 @@
       apt:
         update_cache: yes
         force_apt_get: yes
-    - name: Install the acl package if necessary
-      apt:
-        name: acl
-        state: present
     - name: Upgrade packages
       apt:
         upgrade: dist
-    - name: Install Git
+    - name: Install git and acl packages
       apt:
-        name: git
+        name: 
+          - git
+          - acl
         state: present
     - name: Remove useless packages from the cache
       apt:
