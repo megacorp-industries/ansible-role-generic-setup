@@ -12,12 +12,6 @@
     group: sudo
   loop: "{{ ADMIN_USER }}"
   when: ansible_facts['os_family'] == 'Debian'
-    
-- name: Start and enable ssh daemon
-  service:
-    name: ssh
-    state: started
-    enabled: true
 
 - name: Install latest packages update/upgrade, and install dependencies
   block:
