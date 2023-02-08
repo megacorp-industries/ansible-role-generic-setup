@@ -1,17 +1,30 @@
 ---
-- name: Ensure user exists
+- name: Create specified users
   user:
     name: "{{ item }}"
     shell: /bin/bash
     password: "{{ PASSWORD }}"
-  loop: "{{ USER }}"
+  loop: "{{ USERS }}"
 
-- name: Make any user specified in ADMIN_USER variable an admin user
-  user:
-    user: "{{ item }}"
-    group: sudo
-  loop: "{{ ADMIN_USER }}"
-  when: ansible_facts['os_family'] == 'Debian'
+- name: Configure admin users
+  block:
+    - name: Create admin group
+      group:
+        name: admin
+        state: present
+    - name: Add specified admin users to admin group
+      user:
+        name: "{{ item }}"
+        group: admin
+      loop: "{{ ADMIN_USERS }}"
+    - name: Add sudoer rule for local user
+      copy:
+        dest: /etc/sudoers.d/admin
+        src: files/admin
+        owner: root
+        group: root
+        mode: 0440
+        validate: /usr/sbin/visudo -csf %s
 
 - name: Install latest packages update/upgrade, and install dependencies
   block:
@@ -44,22 +57,22 @@
     - name: Make ohmyzsh git directory safe
       command: git config --global --add safe.directory /home/{{ item }}/.oh-my-zsh
       check_mode: no
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Clone ohmyzsh repo
       git:
         repo: "https://github.com/ohmyzsh/ohmyzsh.git"
         dest: /home/{{ item }}/.oh-my-zsh
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Copy zsh config
       copy:
         src: files/.zshrc
         dest: /home/{{ item }}
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Change default shell
       user:
         name: "{{ item }}"
         shell: /bin/zsh
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
 
 
 - name: Install and configure tmux
@@ -71,22 +84,22 @@
     - name: Make tmux git directory safe
       command: git config --global --add safe.directory /home/{{ item }}/.tmux
       check_mode: no
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Download pretty tmux from git
       git:
         repo: "https://github.com/gpakosz/.tmux.git"
         dest: /home/{{ item }}/.tmux
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Create tmux config symlink
       command: ln -s -f .tmux/.tmux.conf
       args:
         chdir: /home/{{ item }}
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Copy local tmux config to home dir
       command: cp .tmux/.tmux.conf.local .
       args:
         chdir: /home/{{ item }}
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
 
 - name: Install and configure vim
   block:
@@ -97,24 +110,24 @@
     - name: Make vim git directory safe
       command: git config --global --add safe.directory /home/{{ item }}/.vim_runtime
       check_mode: no
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Download awesome vim from git
       git:
         repo: https://github.com/amix/vimrc.git
         depth: 1
         dest: /home/{{item}}/.vim_runtime
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Fix permissions
       file:
         path: /home/{{ item }}
         recurse: true
         owner: "{{ item }}"
         group: "{{ item }}"
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Execute awesome vim install
       command: sh /home/{{ item }}/.vim_runtime/install_awesome_vimrc.sh
       become_user: "{{ item }}"
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
 
 - name: Configure Megacorp terminal logo
   block:
@@ -126,17 +139,17 @@
       file:
         path: /home/{{ item }}/.config/neofetch
         state: directory
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Copy neofetch config
       copy:
         src: files/config.conf
         dest: /home/{{ item }}/.config/neofetch/
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
     - name: Copy megacorplogo
       copy:
         src: files/megacorplogo
         dest: /home/{{ item }}/.config/neofetch/
-      loop: "{{ USER }}"
+      loop: "{{ USERS }}"
 
 - name: Fix permissions (again)
   file:
@@ -144,4 +157,4 @@
     recurse: true
     owner: "{{ item }}"
     group: "{{ item }}"
-  loop: "{{ USER }}"
+  loop: "{{ USERS }}"
