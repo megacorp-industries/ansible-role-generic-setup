@@ -23,17 +23,17 @@
   block:
     - name: Create admin group
       group:
-        name: admin
+        name: admins
         state: present
-    - name: Add specified admin users to admin group
+    - name: Add specified admin users to admins group
       user:
         name: "{{ item }}"
-        group: admin
+        group: admins
       loop: "{{ ADMIN_USERS }}"
     - name: Add sudoer rule for local user
       copy:
-        src: files/etc/sudoers.d/admin
-        dest: /etc/sudoers.d/admin
+        src: files/etc/sudoers.d/admins
+        dest: /etc/sudoers.d/admins
         owner: root
         group: root
         mode: 0440
@@ -86,7 +86,7 @@
         name: "{{ item }}"
         shell: /bin/zsh
       loop: "{{ USERS }}"
-  when: "{{ INSTALL_ZSH }}"
+  when: INSTALL_ZSH
 
 - name: Install and configure tmux
   block:
@@ -113,7 +113,7 @@
       args:
         chdir: /home/{{ item }}
       loop: "{{ USERS }}"
-  when: "{{ INSTALL_TMUX }}"
+  when: INSTALL_TMUX
 
 - name: Install and configure vim
   block:
@@ -142,7 +142,7 @@
       command: sh /home/{{ item }}/.vim_runtime/install_awesome_vimrc.sh
       become_user: "{{ item }}"
       loop: "{{ USERS }}"
-  when: "{{ INSTALL_VIM }}"
+  when: INSTALL_VIM
 
 - name: Configure MOTD
   block:
