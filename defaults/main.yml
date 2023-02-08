@@ -1,3 +1,6 @@
 USERS: [admin]
 ADMIN_USERS: [admin]
 PASSWORD: $6$FJ3kgpSb1IzSK0iF$3TIxNvkXdaJTgmAgJV5FjdGr4RQz5QFwkmT4hqs.LfN3UTh1y365clBMU/iDV8lp99Xj5fQFKKIrFb30XyVcF. #password is 'changeme'
+INSTALL_ZSH: true
+INSTALL_VIM: true
+INSTALL_TMUX: false
