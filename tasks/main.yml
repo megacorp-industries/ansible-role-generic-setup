@@ -87,7 +87,6 @@
         shell: /bin/zsh
       loop: "{{ USERS }}"
 
-
 - name: Install and configure tmux
   block:
     - name: Install tmux
