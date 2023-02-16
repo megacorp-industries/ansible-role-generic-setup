@@ -1,1 +1,1 @@
-%admin ALL=(ALL:ALL) ALL
+%admins ALL=(ALL:ALL) ALL
