@@ -5,6 +5,7 @@
     shell: /bin/bash
     password: "{{ PASSWORD }}"
   loop: "{{ USERS }}"
+  when: SKIP_USER_CREATION
 - name: Add hardened SSH config
   copy:
     src: files/etc/ssh/sshd_config
