@@ -6,19 +6,23 @@
     password: "{{ PASSWORD }}"
   loop: "{{ USERS }}"
   when: USER_CREATION
-- name: Add hardened SSH config
-  copy:
-    src: files/etc/ssh/sshd_config
-    dest: /etc/ssh/sshd_config
-    owner: root
-    group: root
-    mode: 0600
-- name: Set authorized keys for users
-  authorized_key:
-    user: "{{item}}" 
-    state: present
-    key: "{{ lookup('url', 'https://github.com/megacorp-industries.keys', split_lines=False) }}"
-  loop: "{{ USERS }} "
+
+- name: Configure SSH
+  block:
+    - name: Add hardened SSH config
+      copy:
+        src: files/etc/ssh/sshd_config
+        dest: /etc/ssh/sshd_config
+        owner: root
+        group: root
+        mode: 0600
+    - name: Set authorized keys for users
+      authorized_key:
+        user: "{{item}}" 
+        state: present
+        key: "{{ lookup('url', 'https://github.com/megacorp-industries.keys', split_lines=False) }}"
+      loop: "{{ USERS }} "
+  when: "{{ CONFIGURE_SSH }}"
 
 - name: Configure admin users
   block:
