@@ -147,6 +147,10 @@
       command: sh /home/{{ item }}/.vim_runtime/install_awesome_vimrc.sh
       become_user: "{{ item }}"
       loop: "{{ USERS }}"
+    - name: Install vim airline
+      git:
+        repo: https://github.com/vim-airline/vim-airline.git
+        dest: /home/{{item}}/.vim_runtime/my_plugins
   when: INSTALL_VIM
 
 - name: Configure MOTD
