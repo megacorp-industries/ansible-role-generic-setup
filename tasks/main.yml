@@ -22,7 +22,7 @@
         state: present
         key: "{{ lookup('url', 'https://github.com/megacorp-industries.keys', split_lines=False) }}"
       loop: "{{ USERS }} "
-  when: "{{ CONFIGURE_SSH }}"
+  when: CONFIGURE_SSH
 
 - name: Configure admin users
   block:
