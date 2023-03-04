@@ -150,7 +150,7 @@
     - name: Install vim airline
       git:
         repo: https://github.com/vim-airline/vim-airline.git
-        dest: /home/{{ item }}/.vim_runtime/my_plugins
+        dest: /home/{{ item }}/.vim_runtime/my_plugins/vim-airline
       loop: "{{ USERS }}"
   when: INSTALL_VIM
 
