@@ -24,7 +24,7 @@
         mode: 0600
     - name: Set authorized keys for users
       authorized_key:
-        user: "{{item}}" 
+        user: "{{ item }}" 
         state: present
         key: "{{ lookup('url', 'https://github.com/megacorp-industries.keys', split_lines=False) }}"
       loop: "{{ USERS }} "
