@@ -7,7 +7,7 @@
         shell: /bin/bash
         password: "{{ PASSWORD }}"
       loop: "{{ USERS }}"
-    - name: Create user group
+    - name: Create associated groups
       group:
         name: "{{ item }}"
       loop: "{{ USERS }}"
