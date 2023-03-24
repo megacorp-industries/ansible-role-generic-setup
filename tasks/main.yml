@@ -1,10 +1,16 @@
 ---
-- name: Create specified users
-  user:
-    name: "{{ item }}"
-    shell: /bin/bash
-    password: "{{ PASSWORD }}"
-  loop: "{{ USERS }}"
+- name: User creation
+  block:
+    - name: Create specified users
+      user:
+        name: "{{ item }}"
+        shell: /bin/bash
+        password: "{{ PASSWORD }}"
+      loop: "{{ USERS }}"
+    - name: Create user group
+      group:
+        name: "{{ item }}"
+      loop: "{{ USERS }}
   when: USER_CREATION
 
 - name: Configure SSH
