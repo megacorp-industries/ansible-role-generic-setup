@@ -10,7 +10,7 @@
     - name: Create user group
       group:
         name: "{{ item }}"
-      loop: "{{ USERS }}
+      loop: "{{ USERS }}"
   when: USER_CREATION
 
 - name: Configure SSH
