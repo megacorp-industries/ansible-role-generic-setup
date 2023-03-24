@@ -74,6 +74,12 @@
     - name: Update installed software
       dnf:
         update_only: yes
+    - name: Install Git and ACL
+      dnf:
+        name:
+          - git
+          - acl
+        state: present
     - name: Remove useless packages
       dnf:
         autoremove: yes
