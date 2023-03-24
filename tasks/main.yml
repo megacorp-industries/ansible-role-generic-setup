@@ -88,7 +88,7 @@
 - name: Install and configure zsh shell
   block:
     - name: Install zsh
-      apt:
+      package:
         name: zsh
         state: present
     - name: Make ohmyzsh git directory safe
@@ -115,7 +115,7 @@
 - name: Install and configure tmux
   block:
     - name: Install tmux
-      apt:
+      package:
         name: tmux
         state: present
     - name: Make tmux git directory safe
@@ -142,7 +142,7 @@
 - name: Install and configure vim
   block:
     - name: Install vim
-      apt:
+      package:
         name: vim
         state: present
     - name: Make vim git directory safe
@@ -176,7 +176,7 @@
 - name: Configure MOTD
   block:
     - name: Install neofetch
-      apt:
+      package:
         name: neofetch
         state: present
     - name: Ensure .config file exists
