@@ -65,6 +65,19 @@
     - name: Remove dependencies that are no longer required
       apt:
         autoremove: yes
+  when: ansible_facts['os_family'] == 'Debian'
+   
+  block:
+    - name: Update cache
+      dnf:
+        update_cache: yes
+    - name: Update installed software
+      dnf:
+        update_only: yes
+    - name: Remove useless packages
+      dnf:
+        autoremove: yes
+  when: ansible_facts['os_family'] == 'RedHat'
 
 - name: Install and configure zsh shell
   block:
