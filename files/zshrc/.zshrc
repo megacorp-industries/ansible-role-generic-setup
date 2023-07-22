@@ -10,9 +10,6 @@ export ZSH=$HOME/.oh-my-zsh
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="xiong-chiamiov-plus"
 
-# Launch tmux on startup
-if [ "$TMUX" = "" ]; then tmux; fi
-
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
@@ -73,7 +70,7 @@ if [ "$TMUX" = "" ]; then tmux; fi
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux)
+plugins=(kubectl tmux)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -86,9 +83,9 @@ source $ZSH/oh-my-zsh.sh
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
+  export EDITOR='nvim'
 else
-  export EDITOR='mvim'
+  export EDITOR='vi'
 fi
 
 # Compilation flags
@@ -103,6 +100,24 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #
-#
-# Custom Config
+
+
+##<Custom Config>##
+
+#Call the command 'neofetch' using Megacorp's Custom Logo
 neofetch --source ~/.config/neofetch/megacorplogo
+
+#Create a shell alias for running the butane command in a container (takes .bu file as input)
+alias butane='podman run --rm --interactive         \
+              --security-opt label=disable          \
+              --volume "${PWD}":/pwd --workdir /pwd \
+              quay.io/coreos/butane:release'
+
+# For reloading podman-compose stacks
+alias reload="podman-compose down && podman-compose up -d"
+
+# For running aws cli in container
+#alias aws='podman run --rm -it -v ~/.aws:/root/.aws:Z public.ecr.aws/aws-cli/aws-cli'
+
+# Pip install ansible to ~/.local/bin which isn't on PATH by default
+export PATH="${PATH}:${HOME}/.local/bin"

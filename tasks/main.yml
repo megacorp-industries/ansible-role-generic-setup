@@ -1,95 +1,26 @@
 ---
-- name: User creation
-  block:
-    - name: Create specified users
-      user:
-        name: "{{ item }}"
-        shell: /bin/bash
-        password: "{{ PASSWORD }}"
-      loop: "{{ USERS }}"
-    - name: Create associated groups
-      group:
-        name: "{{ item }}"
-      loop: "{{ USERS }}"
-  when: USER_CREATION
+- name: Set the timezone
+  timezone:
+    name: Australia/Darwin
 
-- name: Configure SSH
+- name: Configure automatic ssh 
   block:
-    - name: Add hardened SSH config
+    - name: Create skel .ssh dir
+      file:
+        state: directory
+        path: /etc/skel/.ssh
+    - name: Copy ssh config to skel
       copy:
-        src: files/etc/ssh/sshd_config
-        dest: /etc/ssh/sshd_config
-        owner: root
-        group: root
-        mode: 0600
-    - name: Set authorized keys for users
-      authorized_key:
-        user: "{{ item }}" 
-        state: present
-        key: "{{ lookup('url', 'https://github.com/megacorp-industries.keys', split_lines=False) }}"
-      loop: "{{ USERS }} "
-  when: CONFIGURE_SSH
+        src: files/ssh/authorized_keys
+        dest: /etc/skel/.ssh
 
-- name: Configure admin users
-  block:
-    - name: Create admin group
-      group:
-        name: admins
-        state: present
-    - name: Add specified admin users to admins group
-      user:
-        name: "{{ item }}"
-        group: admins
-      loop: "{{ ADMIN_USERS }}"
-    - name: Add sudoer rule for local user
-      copy:
-        src: files/etc/sudoers.d/admins
-        dest: /etc/sudoers.d/admins
-        owner: root
-        group: root
-        mode: 0440
-        validate: /usr/sbin/visudo -csf %s
-
-- name: Install latest packages update/upgrade, and install dependencies
-  block:
-    - name: Update repos
-      apt:
-        update_cache: yes
-        force_apt_get: yes
-    - name: Upgrade packages
-      apt:
-        upgrade: dist
-    - name: Install git and acl packages
-      apt:
-        name: 
-          - git
-          - acl
-        state: present
-    - name: Remove useless packages from the cache
-      apt:
-        autoclean: yes
-    - name: Remove dependencies that are no longer required
-      apt:
-        autoremove: yes
-  when: ansible_facts['os_family'] == 'Debian'
-   
-  block:
-    - name: Update cache
-      dnf:
-        update_cache: yes
-    - name: Update installed software
-      dnf:
-        update_only: yes
-    - name: Install Git and ACL
-      dnf:
-        name:
-          - git
-          - acl
-        state: present
-    - name: Remove useless packages
-      dnf:
-        autoremove: yes
-  when: ansible_facts['os_family'] == 'RedHat'
+- name: Install simple software without any additional configuration
+  package:
+    name: 
+      - htop
+      - tldr
+      - g++
+    state: present
 
 - name: Install and configure zsh shell
   block:
@@ -98,24 +29,20 @@
         name: zsh
         state: present
     - name: Make ohmyzsh git directory safe
-      command: git config --global --add safe.directory /home/{{ item }}/.oh-my-zsh
+      command: git config --global --add safe.directory /etc/skel/.oh-my-zsh
       check_mode: no
-      loop: "{{ USERS }}"
     - name: Clone ohmyzsh repo
       git:
         repo: "https://github.com/ohmyzsh/ohmyzsh.git"
-        dest: /home/{{ item }}/.oh-my-zsh
-      loop: "{{ USERS }}"
-    - name: Copy zsh config
+        dest: /etc/skel/.oh-my-zsh
+    - name: Copy zsh config to skel dir
       copy:
-        src: files/.zshrc
-        dest: /home/{{ item }}
-      loop: "{{ USERS }}"
-    - name: Change default shell
-      user:
-        name: "{{ item }}"
-        shell: /bin/zsh
-      loop: "{{ USERS }}"
+        src: files/zshrc/.zshrc
+        dest: /etc/skel
+    - name: Copy bash_profile to skel dir
+      copy:
+        src: files/zshrc/.bash_profile
+        dest: /etc/skel
   when: INSTALL_ZSH
 
 - name: Install and configure tmux
@@ -125,58 +52,51 @@
         name: tmux
         state: present
     - name: Make tmux git directory safe
-      command: git config --global --add safe.directory /home/{{ item }}/.tmux
+      command: git config --global --add safe.directory /etc/skel/.tmux
       check_mode: no
-      loop: "{{ USERS }}"
     - name: Download pretty tmux from git
       git:
         repo: "https://github.com/gpakosz/.tmux.git"
-        dest: /home/{{ item }}/.tmux
-      loop: "{{ USERS }}"
-    - name: Create tmux config symlink
-      command: ln -s -f .tmux/.tmux.conf
-      args:
-        chdir: /home/{{ item }}
-      loop: "{{ USERS }}"
+        dest: /etc/skel/.tmux
     - name: Copy local tmux config to home dir
       command: cp .tmux/.tmux.conf.local .
       args:
-        chdir: /home/{{ item }}
-      loop: "{{ USERS }}"
+        chdir: /etc/skel
+    - name: Create tmux config symlink
+      command: ln -s -f .tmux/.tmux.conf
+      args:
+        chdir: /etc/skel
   when: INSTALL_TMUX
 
-- name: Install and configure vim
+- name: Install and configure nvim
   block:
-    - name: Install vim
+    - name: Install nvim and ripgrep
       package:
-        name: vim
+        name: 
+          - neovim
+          - ripgrep
         state: present
-    - name: Make vim git directory safe
-      command: git config --global --add safe.directory /home/{{ item }}/.vim_runtime
-      check_mode: no
-      loop: "{{ USERS }}"
-    - name: Download awesome vim from git
-      git:
-        repo: https://github.com/amix/vimrc.git
-        depth: 1
-        dest: /home/{{item}}/.vim_runtime
-      loop: "{{ USERS }}"
-    - name: Fix permissions
+    - name: Create .config dir in skel
       file:
-        path: /home/{{ item }}
-        recurse: true
-        owner: "{{ item }}"
-        group: "{{ item }}"
-      loop: "{{ USERS }}"
-    - name: Execute awesome vim install
-      command: sh /home/{{ item }}/.vim_runtime/install_awesome_vimrc.sh
-      become_user: "{{ item }}"
-      loop: "{{ USERS }}"
-    - name: Install vim airline
+        path: /etc/skel/.config
+        state: directory
+    - name: Make nvim git directory safe
+      command: git config --global --add safe.directory /etc/skel/.config/nvim
+      check_mode: no
+    - name: Download nvchad from git
       git:
-        repo: https://github.com/vim-airline/vim-airline.git
-        dest: /home/{{ item }}/.vim_runtime/my_plugins/vim-airline
-      loop: "{{ USERS }}"
+        repo: https://github.com/nvchad/nvchad
+        depth: 1
+        dest: /etc/skel/.config/nvim
+    - name: Create fonts directory 
+      file:
+        path: /etc/skel/.local/share/fonts
+        state: directory
+#    - name: Download font 
+#      unarchive:
+#        src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.1/Terminus.zip
+#        dest: /etc/skel/.local/share/fonts
+#        remote_src: true
   when: INSTALL_VIM
 
 - name: Configure MOTD
@@ -187,24 +107,13 @@
         state: present
     - name: Ensure .config file exists
       file:
-        path: /home/{{ item }}/.config/neofetch
+        path: /etc/skel/.config/neofetch
         state: directory
-      loop: "{{ USERS }}"
     - name: Copy neofetch config
       copy:
         src: files/neofetch/config.conf
-        dest: /home/{{ item }}/.config/neofetch/
-      loop: "{{ USERS }}"
+        dest: /etc/skel/.config/neofetch/
     - name: Copy megacorplogo
       copy:
         src: files/neofetch/megacorplogo
-        dest: /home/{{ item }}/.config/neofetch/
-      loop: "{{ USERS }}"
-
-- name: Fix permissions (again)
-  file:
-    path: /home/{{ item }}
-    recurse: true
-    owner: "{{ item }}"
-    group: "{{ item }}"
-  loop: "{{ USERS }}"
+        dest: /etc/skel/.config/neofetch/
