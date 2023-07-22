@@ -108,13 +108,13 @@ fi
 neofetch --source ~/.config/neofetch/megacorplogo
 
 #Create a shell alias for running the butane command in a container (takes .bu file as input)
-alias butane='podman run --rm --interactive         \
+alias butane='docker run --rm --interactive         \
               --security-opt label=disable          \
               --volume "${PWD}":/pwd --workdir /pwd \
               quay.io/coreos/butane:release'
 
 # For reloading podman-compose stacks
-alias reload="podman-compose down && podman-compose up -d"
+alias reload="docker compose down && docker compose up -d"
 
 # For running aws cli in container
 #alias aws='podman run --rm -it -v ~/.aws:/root/.aws:Z public.ecr.aws/aws-cli/aws-cli'
