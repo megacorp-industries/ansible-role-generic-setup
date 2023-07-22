@@ -14,10 +14,28 @@
         src: files/ssh/authorized_keys
         dest: /etc/skel/.ssh
 
+- name: Install latest packages update/upgrade, and install dependencies
+  block:
+    - name: Update repos
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+    - name: Upgrade packages
+      apt:
+        upgrade: dist
+    - name: Remove useless packages from the cache
+      apt:
+        autoclean: yes
+    - name: Remove dependencies that are no longer required
+      apt:
+        autoremove: yes
+  when: ansible_facts['os_family'] == 'Debian'
+
 - name: Install simple software without any additional configuration
   package:
     name: 
       - htop
+      - tldr
       - g++
     state: present
 
