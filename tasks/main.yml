@@ -90,9 +90,16 @@
     - name: Install nvim and ripgrep
       package:
         name: 
-          - neovim
           - ripgrep
         state: present
+    - name: Download nvim tarball
+      get_url:
+        url: https://github.com/neovim/neovim/releases/download/v0.9.0/nvim-linux64.tar.gz
+        dest: /tmp/nvim.tar.gz
+    - name: Extract nvim tarball
+      unarchive:
+        src: /tmp/nvim.tar.gz
+        dest: /usr/local/bin
     - name: Create .config dir in skel
       file:
         path: /etc/skel/.config
