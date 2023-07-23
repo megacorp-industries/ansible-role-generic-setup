@@ -99,17 +99,8 @@
     - name: Extract nvim tarball
       unarchive:
         src: /tmp/nvim.tar.gz
-        dest: /tmp
-        remote_src: true
-    - name: Copy extracted nvim binary to local bin folder
-      copy:
-        src: /tmp/nvim-linux64/bin/nvim
         dest: /usr/local/bin
         remote_src: true
-    - name: Make nvim binary executable
-      file:
-        path: /usr/local/bin/nvim
-        mode: '0755'
     - name: Create .config dir in skel
       file:
         path: /etc/skel/.config
