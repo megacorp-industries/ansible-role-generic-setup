@@ -122,5 +122,5 @@ alias reload="docker compose down && docker compose up -d"
 # Pip install ansible to ~/.local/bin which isn't on PATH by default
 export PATH="${PATH}:${HOME}/.local/bin"
 
-Add nvim binary to PATH
+# Add nvim binary to PATH
 export PATH="${PATH}:/usr/local/bin/nvim-linux64/bin"
