@@ -100,6 +100,7 @@
       unarchive:
         src: /tmp/nvim.tar.gz
         dest: /usr/local/bin
+        remote_src: true
     - name: Create .config dir in skel
       file:
         path: /etc/skel/.config
