@@ -105,6 +105,7 @@
       copy:
         src: /tmp/nvim-linux64/bin/nvim
         dest: /usr/local/bin
+        remote_src: true
     - name: Create .config dir in skel
       file:
         path: /etc/skel/.config
