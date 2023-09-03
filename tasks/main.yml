@@ -45,6 +45,10 @@
       package:
         name: zsh
         state: present
+    - name: Create .oh-my-zsh dir
+      file:
+        path: /etc/skel/.oh-my-zsh
+        state: directory
     - name: Make ohmyzsh git directory safe
       command: git config --global --add safe.directory /etc/skel/.oh-my-zsh
       check_mode: no
