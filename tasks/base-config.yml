@@ -1,0 +1,34 @@
+---
+- name: Set the timezone
+  timezone:
+    name: Australia/Darwin
+
+- name: Configure automatic ssh 
+  block:
+    - name: Create skel .ssh dir
+      file:
+        state: directory
+        path: /etc/skel/.ssh
+    - name: Copy ssh config to skel
+      copy:
+        src: files/ssh/authorized_keys
+        dest: /etc/skel/.ssh
+
+- name: Configure MOTD
+  block:
+    - name: Install neofetch
+      package:
+        name: neofetch
+        state: present
+    - name: Ensure .config file exists
+      file:
+        path: /etc/skel/.config/neofetch
+        state: directory
+    - name: Copy neofetch config
+      copy:
+        src: files/neofetch/config.conf
+        dest: /etc/skel/.config/neofetch/
+    - name: Copy megacorplogo
+      copy:
+        src: files/neofetch/megacorplogo
+        dest: /etc/skel/.config/neofetch/

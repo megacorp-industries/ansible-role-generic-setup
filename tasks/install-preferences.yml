@@ -1,0 +1,90 @@
+---
+- name: Install simple software without any additional configuration
+  package:
+    name: 
+      - htop
+      - tldr
+      - gcc
+      - git
+    state: present
+
+- name: Install and configure zsh shell
+  block:
+    - name: Install zsh
+      package:
+        name: zsh
+        state: present
+    - name: Create .oh-my-zsh dir
+      file:
+        path: /etc/skel/.oh-my-zsh
+        state: directory
+    - name: Make ohmyzsh git directory safe
+      command: git config --global --add safe.directory /etc/skel/.oh-my-zsh
+      check_mode: no
+    - name: Clone ohmyzsh repo
+      git:
+        repo: "https://github.com/ohmyzsh/ohmyzsh.git"
+        dest: /etc/skel/.oh-my-zsh
+    - name: Copy zsh config to skel dir
+      copy:
+        src: files/zshrc/.zshrc
+        dest: /etc/skel
+    - name: Copy bash_profile to skel dir
+      copy:
+        src: files/zshrc/.bash_profile
+        dest: /etc/skel
+
+- name: Install and configure tmux
+  block:
+    - name: Install tmux
+      package:
+        name: tmux
+        state: present
+    - name: Make tmux git directory safe
+      command: git config --global --add safe.directory /etc/skel/.tmux
+      check_mode: no
+    - name: Download pretty tmux from git
+      git:
+        repo: "https://github.com/gpakosz/.tmux.git"
+        dest: /etc/skel/.tmux
+    - name: Copy local tmux config to home dir
+      command: cp .tmux/.tmux.conf.local .
+      args:
+        chdir: /etc/skel
+    - name: Create tmux config symlink
+      command: ln -s -f .tmux/.tmux.conf
+      args:
+        chdir: /etc/skel
+
+- name: Install and configure nvim
+  block:
+    - name: Install nvim and ripgrep
+      package:
+        name: 
+          - ripgrep
+        state: present
+    - name: Download nvim tarball
+      get_url:
+        url: https://github.com/neovim/neovim/releases/download/v0.9.0/nvim-linux64.tar.gz
+        dest: /tmp/nvim.tar.gz
+    - name: Extract nvim tarball
+      unarchive:
+        src: /tmp/nvim.tar.gz
+        dest: /usr/local/bin
+        remote_src: true
+    - name: Create .config dir in skel
+      file:
+        path: /etc/skel/.config
+        state: directory
+    - name: Make nvim git directory safe
+      command: git config --global --add safe.directory /etc/skel/.config/nvim
+      check_mode: no
+    - name: Download nvchad from git
+      git:
+        repo: https://github.com/nvchad/nvchad
+        depth: 1
+        dest: /etc/skel/.config/nvim
+    - name: Create fonts directory 
+      file:
+        path: /etc/skel/.local/share/fonts
+        state: directory
