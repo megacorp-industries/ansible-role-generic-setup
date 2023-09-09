@@ -84,7 +84,3 @@
         repo: https://github.com/nvchad/nvchad
         depth: 1
         dest: /etc/skel/.config/nvim
-    - name: Create fonts directory 
-      file:
-        path: /etc/skel/.local/share/fonts
-        state: directory
