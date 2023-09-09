@@ -2,6 +2,7 @@
 - name: Install simple software without any additional configuration
   package:
     name: 
+      - podman
       - htop
       - tldr
       - gcc
