@@ -85,3 +85,18 @@
         repo: https://github.com/nvchad/nvchad
         depth: 1
         dest: /etc/skel/.config/nvim
+
+    - name: Create custom dir in nvim folder
+      file:
+        path: /etc/skel/.config/nvim/lua/custom
+        state: directory
+
+    - name: Upload chadrc.lua file
+      copy:
+        src: files/nvim/chadrc.lua
+        dest: /etc/skel/.config/nvim/lua/custom
+
+    - name: Upload plugins.lua file
+      copy:
+        src: files/nvim/plugins.lua
+        dest: /etc/skel/.config/nvim/lua/custom
