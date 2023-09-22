@@ -1,19 +1,4 @@
 ---
-- name: Set the timezone
-  timezone:
-    name: Australia/Darwin
-
-- name: Configure automatic ssh 
-  block:
-    - name: Create skel .ssh dir
-      file:
-        state: directory
-        path: " {{ target_dir }}"
-    - name: Copy ssh config to skel
-      copy:
-        src: files/ssh/authorized_keys
-        dest: " {{ target_dir }}"
-
 - name: Configure MOTD
   block:
     - name: Ensure .config file exists
