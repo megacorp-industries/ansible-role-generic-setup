@@ -1,2 +1,3 @@
 apply_customizations: true
 install_packages: true
+target_dir: "/etc/skel"

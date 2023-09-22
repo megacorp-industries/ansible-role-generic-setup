@@ -8,11 +8,11 @@
     - name: Create skel .ssh dir
       file:
         state: directory
-        path: /etc/skel/.ssh
+        path: " {{ target_dir }}"
     - name: Copy ssh config to skel
       copy:
         src: files/ssh/authorized_keys
-        dest: /etc/skel/.ssh
+        dest: " {{ target_dir }}"
 
 - name: Configure MOTD
   block:
@@ -22,13 +22,13 @@
         state: present
     - name: Ensure .config file exists
       file:
-        path: /etc/skel/.config/neofetch
+        path: "{{ target_dir }}/.config/neofetch"
         state: directory
     - name: Copy neofetch config
       copy:
         src: files/neofetch/config.conf
-        dest: /etc/skel/.config/neofetch/
+        dest: "{{ target_dir }}/.config/neofetch/"
     - name: Copy megacorplogo
       copy:
         src: files/neofetch/megacorplogo
-        dest: /etc/skel/.config/neofetch/
+        dest: "{{ target_dir }}/.config/neofetch/"

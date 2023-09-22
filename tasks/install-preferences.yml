@@ -17,68 +17,68 @@
   block:
     - name: Create .oh-my-zsh dir
       file:
-        path: /etc/skel/.oh-my-zsh
+        path: "{{ target_dir }}/.oh-my-zsh
         state: directory
     - name: Make ohmyzsh git directory safe
-      command: git config --global --add safe.directory /etc/skel/.oh-my-zsh
+      command: git config --global --add safe.directory "{{ target_dir }}/.oh-my-zsh
       check_mode: no
     - name: Clone ohmyzsh repo
       git:
         repo: "https://github.com/ohmyzsh/ohmyzsh.git"
-        dest: /etc/skel/.oh-my-zsh
+        dest: "{{ target_dir }}/.oh-my-zsh
     - name: Copy zsh config to skel dir
       copy:
         src: files/zshrc/.zshrc
-        dest: /etc/skel
+        dest: "{{ target_dir }}
     - name: Copy bash_profile to skel dir
       copy:
         src: files/zshrc/.bash_profile
-        dest: /etc/skel
+        dest: "{{ target_dir }}
 
 - name: Install and configure tmux
   block:
     - name: Make tmux git directory safe
-      command: git config --global --add safe.directory /etc/skel/.tmux
+      command: git config --global --add safe.directory "{{ target_dir }}/.tmux
       check_mode: no
     - name: Download pretty tmux from git
       git:
         repo: "https://github.com/gpakosz/.tmux.git"
-        dest: /etc/skel/.tmux
+        dest: "{{ target_dir }}/.tmux
     - name: Copy local tmux config to home dir
       command: cp .tmux/.tmux.conf.local .
       args:
-        chdir: /etc/skel
+        chdir: "{{ target_dir }}
     - name: Create tmux config symlink
       command: ln -s -f .tmux/.tmux.conf
       args:
-        chdir: /etc/skel
+        chdir: "{{ target_dir }}
 
 - name: Install and configure nvim
   block:
     - name: Create .config dir in skel
       file:
-        path: /etc/skel/.config
+        path: "{{ target_dir }}/.config"
         state: directory
     - name: Make nvim git directory safe
-      command: git config --global --add safe.directory /etc/skel/.config/nvim
+      command: git config --global --add safe.directory "{{ target_dir }}/.config/nvim"
       check_mode: no
     - name: Download nvchad from git
       git:
         repo: https://github.com/nvchad/nvchad
         depth: 1
-        dest: /etc/skel/.config/nvim
+        dest: "{{ target_dir }}/.config/nvim"
 
     - name: Create custom dir in nvim folder
       file:
-        path: /etc/skel/.config/nvim/lua/custom
+        path: "{{ target_dir }}/.config/nvim/lua/custom"
         state: directory
 
     - name: Upload chadrc.lua file
       copy:
         src: files/nvim/chadrc.lua
-        dest: /etc/skel/.config/nvim/lua/custom
+        dest: "{{ target_dir }}/.config/nvim/lua/custom"
 
     - name: Upload plugins.lua file
       copy:
         src: files/nvim/plugins.lua
-        dest: /etc/skel/.config/nvim/lua/custom
+        dest: "{{ target_dir }}/.config/nvim/lua/custom"
