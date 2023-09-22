@@ -16,10 +16,6 @@
 
 - name: Configure MOTD
   block:
-    - name: Install neofetch
-      package:
-        name: neofetch
-        state: present
     - name: Ensure .config file exists
       file:
         path: "{{ target_dir }}/.config/neofetch"

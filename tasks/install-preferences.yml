@@ -10,6 +10,7 @@
       - zsh
       - tmux
       - ripgrep
+      - neovim
     state: present
   when: install_packages
 
@@ -17,41 +18,41 @@
   block:
     - name: Create .oh-my-zsh dir
       file:
-        path: "{{ target_dir }}/.oh-my-zsh
+        path: "{{ target_dir }}/.oh-my-zsh"
         state: directory
     - name: Make ohmyzsh git directory safe
-      command: git config --global --add safe.directory "{{ target_dir }}/.oh-my-zsh
+      command: "git config --global --add safe.directory {{ target_dir }}/.oh-my-zsh"
       check_mode: no
     - name: Clone ohmyzsh repo
       git:
         repo: "https://github.com/ohmyzsh/ohmyzsh.git"
-        dest: "{{ target_dir }}/.oh-my-zsh
+        dest: "{{ target_dir }}/.oh-my-zsh"
     - name: Copy zsh config to skel dir
       copy:
         src: files/zshrc/.zshrc
-        dest: "{{ target_dir }}
+        dest: "{{ target_dir }}"
     - name: Copy bash_profile to skel dir
       copy:
         src: files/zshrc/.bash_profile
-        dest: "{{ target_dir }}
+        dest: "{{ target_dir }}"
 
 - name: Install and configure tmux
   block:
     - name: Make tmux git directory safe
-      command: git config --global --add safe.directory "{{ target_dir }}/.tmux
+      command: "git config --global --add safe.directory {{ target_dir }}/.tmux"
       check_mode: no
     - name: Download pretty tmux from git
       git:
         repo: "https://github.com/gpakosz/.tmux.git"
-        dest: "{{ target_dir }}/.tmux
+        dest: "{{ target_dir }}/.tmux"
     - name: Copy local tmux config to home dir
       command: cp .tmux/.tmux.conf.local .
       args:
-        chdir: "{{ target_dir }}
+        chdir: "{{ target_dir }}"
     - name: Create tmux config symlink
       command: ln -s -f .tmux/.tmux.conf
       args:
-        chdir: "{{ target_dir }}
+        chdir: "{{ target_dir }}"
 
 - name: Install and configure nvim
   block:
@@ -60,7 +61,7 @@
         path: "{{ target_dir }}/.config"
         state: directory
     - name: Make nvim git directory safe
-      command: git config --global --add safe.directory "{{ target_dir }}/.config/nvim"
+      command: "git config --global --add safe.directory {{ target_dir }}/.config/nvim"
       check_mode: no
     - name: Download nvchad from git
       git:
