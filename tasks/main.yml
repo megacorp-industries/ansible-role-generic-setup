@@ -4,4 +4,4 @@
 
 - name: Apply customizations
   import_tasks: install-preferences.yml
-  when: apply_customizations | default(false)
+  when: apply_customizations

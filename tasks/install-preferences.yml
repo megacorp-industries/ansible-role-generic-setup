@@ -7,14 +7,14 @@
       - tldr
       - gcc
       - git
+      - zsh
+      - tmux
+      - ripgrep
     state: present
+  when: install_packages
 
 - name: Install and configure zsh shell
   block:
-    - name: Install zsh
-      package:
-        name: zsh
-        state: present
     - name: Create .oh-my-zsh dir
       file:
         path: /etc/skel/.oh-my-zsh
@@ -37,10 +37,6 @@
 
 - name: Install and configure tmux
   block:
-    - name: Install tmux
-      package:
-        name: tmux
-        state: present
     - name: Make tmux git directory safe
       command: git config --global --add safe.directory /etc/skel/.tmux
       check_mode: no
@@ -59,20 +55,6 @@
 
 - name: Install and configure nvim
   block:
-    - name: Install nvim and ripgrep
-      package:
-        name: 
-          - ripgrep
-        state: present
-    - name: Download nvim tarball
-      get_url:
-        url: https://github.com/neovim/neovim/releases/download/v0.9.0/nvim-linux64.tar.gz
-        dest: /tmp/nvim.tar.gz
-    - name: Extract nvim tarball
-      unarchive:
-        src: /tmp/nvim.tar.gz
-        dest: /usr/local/bin
-        remote_src: true
     - name: Create .config dir in skel
       file:
         path: /etc/skel/.config
