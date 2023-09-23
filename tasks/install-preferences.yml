@@ -1,6 +1,6 @@
 ---
 - name: Install simple software without any additional configuration
-  package:
+  community.general.rpm_ostree_pkg:
     name: 
       - podman
       - htop
@@ -11,8 +11,9 @@
       - tmux
       - ripgrep
       - neovim
+      - neofetch
     state: present
-  when: install_packages
+  when: ansible_facts['ansible_pkg_mgr'] == 'atomic_container'
 
 - name: Install and configure zsh shell
   block:
