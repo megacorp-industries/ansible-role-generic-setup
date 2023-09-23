@@ -1,5 +1,5 @@
 ---
-- name: Install preferred software
+- name: Install preferred software (using package)
   package:
     name: 
       - podman
@@ -15,7 +15,7 @@
     state: present
   when: ansible_facts['pkg_mgr'] != 'atomic_container'
 
-- name: Install simple software without any additional configuration
+- name: Install preferred software on rpm-ostree systems
   community.general.rpm_ostree_pkg:
     name: distrobox
   when: ansible_facts['pkg_mgr'] == 'atomic_container'
