@@ -13,7 +13,7 @@
       - neovim
       - neofetch
     state: present
-  when: ansible_facts['ansible_pkg_mgr'] == 'atomic_container'
+  when: "{{ ansible_facts['ansible_pkg_mgr'] == 'atomic_container' }}"
 
 - name: Install and configure zsh shell
   block:
