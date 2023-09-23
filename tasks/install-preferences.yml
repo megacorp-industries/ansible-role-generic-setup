@@ -2,7 +2,6 @@
 - name: Install preferred software (using package)
   package:
     name: 
-      - podman
       - htop
       - tldr
       - gcc
@@ -15,11 +14,17 @@
     state: present
   when: ansible_facts['pkg_mgr'] != 'atomic_container'
 
-- name: Install preferred software on rpm-ostree systems
-  community.general.rpm_ostree_pkg:
-    name: distrobox
-  when: ansible_facts['pkg_mgr'] == 'atomic_container'
-  notify: Reboot if required
+- name: RPM-OSTree specific settings
+  block:
+    - name: Install distrobox
+      community.general.rpm_ostree_pkg:
+        name: distrobox
+      when: ansible_facts['pkg_mgr'] == 'atomic_container'
+      notify: Reboot if required
+    - name: Copy distrobox.ini file over
+      copy:
+        src: files/distrobox/distrobox.ini
+        dest: "{{ target_dir }}/distrobox.ini"
 
 - name: Configure zsh shell
   block:
