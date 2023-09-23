@@ -33,10 +33,6 @@
       copy:
         src: files/zshrc/.zshrc
         dest: "{{ target_dir }}"
-    - name: Copy bash_profile to skel dir
-      copy:
-        src: files/zshrc/.bash_profile
-        dest: "{{ target_dir }}"
 
 - name: Install and configure tmux
   block:
