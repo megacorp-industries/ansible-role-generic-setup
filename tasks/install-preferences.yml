@@ -43,10 +43,6 @@
       copy:
         src: files/zshrc/.zshrc
         dest: "{{ target_dir }}"
-    - name: Copy bash_profile over
-      copy:
-        src: files/zshrc/.bash_profile
-        dest: "{{ target_dir }}"
 
 - name: Configure tmux
   block:
