@@ -1,19 +1,4 @@
 ---
-- name: Install preferred software (using package)
-  package:
-    name: 
-      - htop
-      - tldr
-      - gcc
-      - git
-      - zsh
-      - tmux
-      - ripgrep
-      - neovim
-      - neofetch
-    state: present
-  when: ansible_facts['pkg_mgr'] != 'atomic_container'
-
 - name: RPM-OSTree specific settings
   block:
     - name: Install distrobox

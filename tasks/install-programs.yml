@@ -1,0 +1,14 @@
+---
+- name: Install preferred software (using package)
+  package:
+    name: 
+      - htop
+      - tldr
+      - gcc
+      - git
+      - zsh
+      - tmux
+      - ripgrep
+      - neovim
+      - neofetch
+    state: present

@@ -2,6 +2,10 @@
 - name: Apply base config
   import_tasks: base-config.yml
 
+- name: Install programs
+  import_tasks: install-programs.yml
+  when: install_programs
+
 - name: Apply customizations
   import_tasks: install-preferences.yml
   when: apply_customizations
