@@ -4,7 +4,7 @@
 
 - name: Install programs
   import_tasks: install-programs.yml
-  when: install_programs
+  when: install_programs | default(false)
 
 - name: Apply customizations
   import_tasks: install-preferences.yml
