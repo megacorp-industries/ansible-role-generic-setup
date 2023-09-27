@@ -1,15 +1,8 @@
 ---
-- name: RPM-OSTree specific settings
-  block:
-    - name: Install distrobox
-      community.general.rpm_ostree_pkg:
-        name: distrobox
-      notify: Reboot if required
-    - name: Copy distrobox.ini file over
-      copy:
-        src: files/distrobox/distrobox.ini
-        dest: "{{ target_dir }}/distrobox.ini"
-  when: ansible_facts['pkg_mgr'] == 'atomic_container'
+- name: Copy distrobox.ini file over
+  copy:
+    src: files/distrobox/distrobox.ini
+    dest: "{{ target_dir }}/distrobox.ini"
 
 - name: Configure zsh shell
   block:
