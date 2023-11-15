@@ -4,24 +4,6 @@
     src: files/distrobox/distrobox.ini
     dest: "{{ target_dir }}/distrobox.ini"
 
-- name: Configure zsh shell
-  block:
-    - name: Create .oh-my-zsh dir
-      file:
-        path: "{{ target_dir }}/.oh-my-zsh"
-        state: directory
-    - name: Make ohmyzsh git directory safe
-      command: "git config --global --add safe.directory {{ target_dir }}/.oh-my-zsh"
-      check_mode: no
-    - name: Clone ohmyzsh repo
-      git:
-        repo: "https://github.com/ohmyzsh/ohmyzsh.git"
-        dest: "{{ target_dir }}/.oh-my-zsh"
-    - name: Copy zsh config over
-      copy:
-        src: files/zshrc/.zshrc
-        dest: "{{ target_dir }}"
-
 - name: Configure tmux
   block:
     - name: Make tmux git directory safe
